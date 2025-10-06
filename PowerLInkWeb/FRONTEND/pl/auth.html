@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PowerLink - Authentication</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .auth-container {
+      background: #fff;
+      padding: 35px 40px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    }
+
+    .auth-container h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: #222;
+    }
+
+    .auth-container p {
+      font-size: 1rem;
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      border-color: #ffcc00;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px 0;
+      margin: 10px 0;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.25s ease-in-out;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background-color: #ffcc00;
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 204, 0, 0.4);
+    }
+
+    .btn-secondary {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    .btn-secondary:hover {
+      background-color: #1e7e34;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(30, 126, 52, 0.3);
+    }
+
+    .link {
+      display: inline-block;
+      margin-top: 15px;
+      color: #007bff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+
+    .auth-steps {
+      display: none;
+    }
+
+    .auth-steps.active {
+      display: block;
+    }
+
+    .otp-inputs {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+
+    .otp-inputs input {
+      width: 45px;
+      height: 45px;
+      text-align: center;
+      font-size: 1.2rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .address-fields {
+      margin-top: 15px;
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .success-message {
+      color: #28a745;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">← Back to Home</a>
+
+  <div class="auth-container">
+    <!-- Login Form -->
+    <div id="login-step" class="auth-steps active">
+      <h2>Login to PowerLink</h2>
+      <p>Enter your mobile number to receive an OTP</p>
+      
+      <div class="form-group">
+        <label for="login-mobile">Mobile Number</label>
+        <input type="tel" id="login-mobile" placeholder="Enter your 10-digit mobile number" maxlength="10" pattern="[0-9]{10}">
+        <div id="login-mobile-error" class="error-message">Please enter a valid 10-digit mobile number</div>
+      </div>
+      
+      <button id="request-otp-btn" class="btn btn-primary">Request OTP</button>
+      <p>Don't have an account? <a id="show-register-link" class="link">Register Now</a></p>
+    </div>
+
+    <!-- OTP Verification for Login -->
+    <div id="login-otp-step" class="auth-steps">
+      <h2>Verify OTP</h2>
+      <p>Enter the 6-digit code sent to <span id="login-mobile-display"></span></p>
+      
+      <div class="otp-inputs">
+        <input type="text" maxlength="1" class="otp-input" data-index="1">
+        <input type="text" maxlength="1" class="otp-input" data-index="2">
+        <input type="text" maxlength="1" class="otp-input" data-index="3">
+        <input type="text" maxlength="1" class="otp-input" data-index="4">
+        <input type="text" maxlength="1" class="otp-input" data-index="5">
+        <input type="text" maxlength="1" class="otp-input" data-index="6">
+      </div>
+      
+      <div id="login-otp-error" class="error-message">Invalid OTP. Please try again.</div>
+      <div id="login-otp-success" class="success-message">OTP verified successfully!</div>
+      
+      <button id="verify-login-otp-btn" class="btn btn-primary">Verify & Login</button>
+      <p>Didn't receive the code? <a id="resend-login-otp" class="link">Resend OTP</a></p>
+      <p><a id="back-to-login" class="link">Back to Login</a></p>
+    </div>
+
+    <!-- Registration Form - Step 1 -->
+    <div id="register-step-1" class="auth-steps">
+      <h2>Create an Account</h2>
+      <p>Enter your details to get started</p>
+      
+      <div class="form-group">
+        <label for="register-mobile">Mobile Number*</label>
+        <input type="tel" id="register-mobile" placeholder="Enter your 10-digit mobile number" maxlength="10" pattern="[0-9]{10}">
+        <div id="register-mobile-error" class="error-message">Please enter a valid 10-digit mobile number</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="register-email">Email Address*</label>
+        <input type="email" id="register-email" placeholder="Enter your email address">
+        <div id="register-email-error" class="error-message">Please enter a valid email address</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="register-firstname">First Name*</label>
+        <input type="text" id="register-firstname" placeholder="Enter your first name">
+        <div id="register-firstname-error" class="error-message">Please enter your first name</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="register-lastname">Last Name*</label>
+        <input type="text" id="register-lastname" placeholder="Enter your last name">
+        <div id="register-lastname-error" class="error-message">Please enter your last name</div>
+      </div>
+      
+      <button id="register-next-btn" class="btn btn-secondary">Next</button>
+      <p>Already have an account? <a id="show-login-link" class="link">Login</a></p>
+    </div>
+
+    <!-- Registration Form - Step 2 (Address) -->
+    <div id="register-step-2" class="auth-steps">
+      <h2>Your Address</h2>
+      <p>Please provide your address details</p>
+      
+      <div class="form-group">
+        <label for="register-state">State*</label>
+        <input type="text" id="register-state" placeholder="Enter your state">
+        <div id="register-state-error" class="error-message">Please enter your state</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="register-city">City*</label>
+        <input type="text" id="register-city" placeholder="Enter your city">
+        <div id="register-city-error" class="error-message">Please enter your city</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="register-area">Area*</label>
+        <input type="text" id="register-area" placeholder="Enter your area">
+        <div id="register-area-error" class="error-message">Please enter your area</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="register-line">Address Line*</label>
+        <input type="text" id="register-line" placeholder="Enter your address line">
+        <div id="register-line-error" class="error-message">Please enter your address line</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="register-doorno">Door No*</label>
+        <input type="text" id="register-doorno" placeholder="Enter your door number">
+        <div id="register-doorno-error" class="error-message">Please enter your door number</div>
+      </div>
+      
+      <button id="register-submit-btn" class="btn btn-secondary">Register</button>
+      <p><a id="back-to-register-1" class="link">Back</a></p>
+    </div>
+
+    <!-- OTP Verification for Registration -->
+    <div id="register-otp-step" class="auth-steps">
+      <h2>Verify OTP</h2>
+      <p>Enter the 6-digit code sent to <span id="register-mobile-display"></span></p>
+      
+      <div class="otp-inputs">
+        <input type="text" maxlength="1" class="reg-otp-input" data-index="1">
+        <input type="text" maxlength="1" class="reg-otp-input" data-index="2">
+        <input type="text" maxlength="1" class="reg-otp-input" data-index="3">
+        <input type="text" maxlength="1" class="reg-otp-input" data-index="4">
+        <input type="text" maxlength="1" class="reg-otp-input" data-index="5">
+        <input type="text" maxlength="1" class="reg-otp-input" data-index="6">
+      </div>
+      
+      <div id="register-otp-error" class="error-message">Invalid OTP. Please try again.</div>
+      <div id="register-otp-success" class="success-message">OTP verified successfully!</div>
+      
+      <button id="verify-register-otp-btn" class="btn btn-secondary">Verify & Create Account</button>
+      <p>Didn't receive the code? <a id="resend-register-otp" class="link">Resend OTP</a></p>
+    </div>
+
+    <!-- Registration Success -->
+    <div id="register-success" class="auth-steps">
+      <h2>Registration Successful!</h2>
+      <p>Your account has been created successfully.</p>
+      <button id="go-to-login-btn" class="btn btn-primary">Go to Login</button>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>

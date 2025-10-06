@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerLink Worker Portal - Professional SPA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ffcc00; /* Power Yellow */
+            --secondary: #1a202c; /* Dark Grey/Black */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Soft background */
+            min-height: 100vh; /* Ensure body takes at least full height */
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--secondary);
+            transition: all 0.3s ease;
+            font-weight: 700;
+        }
+        .btn-primary:hover {
+            background-color: #e6b800;
+            box-shadow: 0 6px 15px rgba(255, 204, 0, 0.4);
+        }
+        .card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        /* Custom switch for the Go Online toggle */
+        .online-switch input:checked + .slider {
+            background-color: #10b981; /* Emerald Green */
+        }
+        .online-switch input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .slider {
+            cursor: pointer;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        /* Sidebar Styles - Mobile is fixed but off-screen, Desktop is fixed on-screen */
+        .sidebar {
+            transition: transform 0.3s ease;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                /* Fix position for mobile hamburger menu functionality */
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 20;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        .active-link {
+            background-color: rgba(255, 204, 0, 0.15); /* Light yellow background */
+            color: var(--secondary);
+            font-weight: 700;
+            border-left: 4px solid var(--primary);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Mobile Menu Button (Visible on small screens) -->
+    <button id="mobile-menu-btn" class="md:hidden fixed top-4 left-4 z-30 p-2 bg-gray-800 text-white rounded-lg shadow-lg">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation - Uses fixed positioning on medium screens and up -->
+    <nav id="sidebar" class="sidebar w-64 bg-white shadow-xl flex flex-col p-4 md:fixed md:top-0 md:left-0 md:h-screen z-20">
+        <div class="text-3xl font-extrabold tracking-tight text-yellow-500 py-6 mb-4 px-2 border-b">
+            PowerLink
+        </div>
+
+        <ul class="space-y-2 flex-grow">
+            <!-- Navigation Links -->
+            <li><a href="#home" data-view="home-view" class="nav-link flex items-center p-3 text-gray-700 rounded-lg hover:bg-gray-50 transition active-link"><i class="fas fa-home w-6 mr-3"></i> HOME (Services Details)</a></li>
+            <li><a href="#dashboard" data-view="dashboard-view" class="nav-link flex items-center p-3 text-gray-700 rounded-lg hover:bg-gray-50 transition"><i class="fas fa-chart-line w-6 mr-3"></i> DASHBOARD (Overview)</a></li>
+            <li><a href="#payments" data-view="payments-view" class="nav-link flex items-center p-3 text-gray-700 rounded-lg hover:bg-gray-50 transition"><i class="fas fa-dollar-sign w-6 mr-3"></i> PAYMENTS (Financials)</a></li>
+            <li><a href="#orders" data-view="orders-view" class="nav-link flex items-center p-3 text-gray-700 rounded-lg hover:bg-gray-50 transition"><i class="fas fa-list-check w-6 mr-3"></i> ORDERS (Job Management)</a></li>
+            <li><a href="#api" data-view="api-view" class="nav-link flex items-center p-3 text-gray-700 rounded-lg hover:bg-gray-50 transition"><i class="fas fa-map-location-dot w-6 mr-3"></i> API (Live Location)</a></li>
+            <li><a href="#account" data-view="account-view" class="nav-link flex items-center p-3 text-gray-700 rounded-lg hover:bg-gray-50 transition"><i class="fas fa-user-circle w-6 mr-3"></i> ACCOUNT (Profile)</a></li>
+        </ul>
+
+        <div class="p-2 border-t mt-4">
+             <p class="text-xs text-gray-500 mb-2">Authenticated User ID:</p>
+             <p id="user-id-display" class="text-xs font-mono text-gray-600 truncate">Loading...</p>
+             <p class="text-xs text-gray-500 mt-2">Design V3.1 | <span class="text-yellow-500">Professional Mode</span></p>
+        </div>
+    </nav>
+
+    <!-- Main Content Area - Now offset by the fixed sidebar's width on desktop -->
+    <div id="main-content" class="p-4 md:p-8 md:ml-64 relative">
+        <div class="max-w-full w-full">
+
+            <!-- Loading Indicator -->
+            <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-70 z-50 flex items-center justify-center hidden">
+                <div class="flex flex-col items-center bg-white p-6 rounded-lg shadow-2xl">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+                    <p class="mt-4 text-gray-700 font-semibold">Loading Profile Data...</p>
+                </div>
+            </div>
+
+            <!-- Availability Header (Sticky header for all views except Home) -->
+            <div id="availability-header" class="bg-white p-4 rounded-xl shadow-lg mb-8 sticky top-0 z-10 hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2 sm:mb-0">Worker Dashboard</h2>
+                    <div class="flex items-center space-x-3">
+                        <span id="online-status-text-header" class="text-xl font-bold text-gray-400 transition-colors duration-300">Offline</span>
+                        <label class="online-switch relative inline-block w-14 h-8">
+                            <input type="checkbox" id="availability-toggle" class="opacity-0 w-0 h-0">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="text-xl font-bold text-green-500 transition-colors duration-300">Online</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. HOME (Services Details) View -->
+            <section id="home-view" class="view-section max-w-6xl w-full bg-white rounded-2xl p-6 md:p-12 card active">
+                <div class="grid md:grid-cols-2 gap-10 items-center">
+                    <!-- Text and CTA -->
+                    <div class="text-left">
+                        <span class="text-yellow-500 font-bold tracking-widest uppercase text-sm mb-3 block">Welcome to PowerLink</span>
+                        <h1 class="text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
+                            Grow Your Service Business. <span class="text-yellow-500">Commission-Smart.</span>
+                        </h1>
+                        <p class="text-lg text-gray-600 mb-8">
+                            The professional platform built for Electricians, Mechanics, and Technicians. Accept local service requests instantly, manage your schedule, and maximize your earnings with a transparent, low-commission model.
+                        </p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                            <button id="complete-profile-btn" class="btn-primary text-lg px-8 py-3 rounded-xl shadow-lg">
+                                Complete Profile Setup
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-6">Transparent 10% maximum service fee on successful jobs.</p>
+                    </div>
+
+                    <!-- Mock App Screenshot/Illustration -->
+                    <div class="hidden md:block">
+                        <img src="https://placehold.co/600x400/fff1d0/555?text=Service+Overview+%26+Benefits" alt="Service app illustration" class="rounded-xl shadow-2xl">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. DASHBOARD (Overview) View -->
+            <section id="dashboard-view" class="view-section max-w-full w-full p-6 md:p-10 bg-white rounded-2xl shadow-2xl hidden">
+                <h3 class="text-3xl font-bold text-gray-800 mb-6">Performance Snapshot</h3>
+
+                <!-- Metric Cards (4-column grid for performance tracking) -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    
+                    <!-- Earnings Card -->
+                    <div class="bg-white p-6 rounded-xl card border-t-4 border-green-500">
+                        <p class="text-sm font-medium text-gray-500">Weekly Earnings</p>
+                        <p id="weekly-earnings" class="text-3xl font-extrabold text-gray-900 mt-2">$ 0.00</p>
+                        <p class="text-xs text-green-600 mt-1 flex items-center">
+                            <i class="fas fa-arrow-up w-3 mr-1"></i> 
+                            +20% this week
+                        </p>
+                    </div>
+
+                    <!-- Jobs Card -->
+                    <div class="bg-white p-6 rounded-xl card border-t-4 border-blue-500">
+                        <p class="text-sm font-medium text-gray-500">Jobs Completed</p>
+                        <p id="jobs-completed" class="text-3xl font-extrabold text-gray-900 mt-2">0</p>
+                        <p class="text-xs text-blue-600 mt-1 flex items-center">
+                            <i class="fas fa-calendar-alt w-3 mr-1"></i>
+                            Last 30 days
+                        </p>
+                    </div>
+
+                    <!-- Rating Card -->
+                    <div class="bg-white p-6 rounded-xl card border-t-4 border-yellow-500">
+                        <p class="text-sm font-medium text-gray-500">Avg. Rating</p>
+                        <p id="avg-rating" class="text-3xl font-extrabold text-gray-900 mt-2">0.0</p>
+                        <p class="text-xs text-yellow-600 mt-1 flex items-center">
+                            <i class="fas fa-star w-3 mr-1"></i>
+                            Based on reviews
+                        </p>
+                    </div>
+
+                    <!-- Acceptance Rate Card -->
+                    <div class="bg-white p-6 rounded-xl card border-t-4 border-red-500">
+                        <p class="text-sm font-medium text-gray-500">Acceptance Rate</p>
+                        <p id="acceptance-rate" class="text-3xl font-extrabold text-gray-900 mt-2">0%</p>
+                        <p class="text-xs text-red-600 mt-1 flex items-center">
+                            <i class="fas fa-handshake w-3 mr-1"></i>
+                            Maintain a high score!
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Quick Service Stats -->
+                    <div class="bg-gray-50 p-6 rounded-xl shadow-inner">
+                        <h4 class="text-xl font-semibold mb-4 text-gray-700">Service Area Summary</h4>
+                        <ul class="space-y-3">
+                            <li class="flex justify-between items-center text-gray-600"><span>Service Specialization:</span> <span id="dashboard-specialization" class="font-bold text-blue-500">N/A</span></li>
+                            <li class="flex justify-between items-center text-gray-600"><span>Service Radius:</span> <span id="dashboard-radius" class="font-bold text-yellow-500">0 km</span></li>
+                            <li class="flex justify-between items-center text-gray-600"><span>Average Job Distance:</span> <span class="font-bold text-blue-500">4.1 km (Mock)</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Service Tier -->
+                    <div class="bg-white p-6 rounded-xl card border-l-4 border-blue-500">
+                        <h4 class="text-xl font-semibold mb-4 text-gray-700">Your Worker Tier</h4>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-4xl font-extrabold text-blue-700">Pro Tier (Mock)</span>
+                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">10% Commission Cap</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">Maintain 90%+ acceptance rate and 4.8+ rating to remain in Pro Tier.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. PAYMENTS (Financial Details) View -->
+            <section id="payments-view" class="view-section max-w-full w-full p-6 md:p-10 bg-white rounded-2xl shadow-2xl hidden">
+                <h3 class="text-3xl font-bold text-gray-800 mb-6">Financial Management & Payouts</h3>
+
+                <!-- Payout Metrics (Mock data remains here for now) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-green-50 p-6 rounded-xl card border-l-4 border-green-600">
+                        <p class="text-sm font-medium text-gray-500">Balance Available</p>
+                        <p class="text-4xl font-extrabold text-green-700 mt-1">$ 985.50</p>
+                        <button class="text-xs text-green-600 mt-2 hover:underline">Withdraw Now</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl card">
+                        <p class="text-sm font-medium text-gray-500">Next Payout Date</p>
+                        <p class="text-4xl font-extrabold text-gray-900 mt-1">Friday, Oct 2</p>
+                        <p class="text-sm text-gray-500 mt-2">Scheduled Payout: $450.00</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl card">
+                        <p class="text-sm font-medium text-gray-500">Commission Paid YTD</p>
+                        <p class="text-4xl font-extrabold text-gray-900 mt-1">$ 1,230.10</p>
+                        <p class="text-sm text-gray-500 mt-2">Avg. Commission Rate: 8.9%</p>
+                    </div>
+                </div>
+
+                <!-- Transactions Table -->
+                <h4 class="text-2xl font-bold text-gray-700 mb-4">Recent Transactions</h4>
+                <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">Service Pay</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Emergency Leak Fix - Order #1045</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-09-30</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-green-600">+ $120.00</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">Commission</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Fee for Order #1045 (10%)</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-09-30</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-red-600">- $12.00</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">Payout</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Weekly Payout to Bank (Completed)</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-09-29</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-blue-600">- $550.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 4. ORDERS (Job Management) View (Mock data remains here for now) -->
+            <section id="orders-view" class="view-section max-w-full w-full p-6 md:p-10 bg-white rounded-2xl shadow-2xl hidden">
+                <h3 class="text-3xl font-bold text-gray-800 mb-6">Current Job Flow Management</h3>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Available Requests Column -->
+                    <div>
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-bell text-yellow-500 mr-3"></i> New Requests (3)
+                        </h4>
+                        <div class="space-y-4">
+                            
+                            <!-- Request Card 1 -->
+                            <div class="p-5 border border-gray-200 rounded-xl bg-yellow-50 flex flex-col justify-between items-start card border-l-4 border-yellow-500">
+                                <p class="font-bold text-lg text-gray-800 mb-1">Emergency Fuse Box Repair</p>
+                                <p class="text-sm text-gray-600 mb-3">Location: **123 Maple Street** | Distance: **2.5 km**</p>
+                                <div class="flex justify-between w-full items-center">
+                                    <span class="text-xl font-extrabold text-green-700">$120 Est. Pay</span>
+                                    <div class="space-x-2">
+                                        <button class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-600">Decline</button>
+                                        <button class="bg-green-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 shadow-md">Accept Job</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Request Card 2 -->
+                            <div class="p-5 border border-gray-200 rounded-xl bg-gray-50 flex flex-col justify-between items-start card">
+                                <p class="font-bold text-lg text-gray-800 mb-1">Routine Vehicle Servicing</p>
+                                <p class="text-sm text-gray-600 mb-3">Location: **45 Industrial Ave** | Distance: **5.1 km**</p>
+                                <div class="flex justify-between w-full items-center">
+                                    <span class="text-xl font-extrabold text-green-700">$85 Est. Pay</span>
+                                    <div class="space-x-2">
+                                        <button class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-600">Decline</button>
+                                        <button class="bg-green-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 shadow-md">Accept Job</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accepted Jobs Column -->
+                    <div>
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-wrench text-blue-500 mr-3"></i> Jobs In Progress (1)
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="p-5 border border-blue-200 rounded-xl bg-blue-50 flex flex-col justify-between items-start card border-l-4 border-blue-500">
+                                <p class="font-bold text-lg text-gray-800 mb-1">Accepted: Fridge Tech Call</p>
+                                <p class="text-sm text-gray-600 mb-3">Customer: Jane Doe | ETA to Location: **15 min**</p>
+                                <div class="flex justify-between w-full items-center">
+                                    <span class="text-xl font-extrabold text-blue-700">Tracking Location...</span>
+                                    <div class="space-x-2">
+                                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">Navigate</button>
+                                        <button class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700">Complete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. API (Live Location/Map) View -->
+            <section id="api-view" class="view-section max-w-full w-full p-6 md:p-10 bg-white rounded-2xl shadow-2xl hidden">
+                <h3 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-location-arrow text-red-500 mr-3"></i> Live Service Location Tracker
+                </h3>
+                <p class="text-lg text-gray-600 mb-4">View your current accepted job and the quickest route to the customer's service location.</p>
+                
+                <div class="h-[500px] w-full bg-gray-200 rounded-xl flex items-center justify-center text-gray-500 font-bold text-2xl border border-gray-300 shadow-inner">
+                    [Placeholder for Real-time Map API Integration - e.g., Google Maps]
+                </div>
+                
+                <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
+                    <p class="font-semibold text-gray-700">Current Job:</p>
+                    <p class="text-sm text-gray-600">Emergency Fuse Box Repair (Order #1046) | Distance: 2.5 km | Expected Arrival: 8:45 AM</p>
+                </div>
+            </section>
+
+            <!-- 6. ACCOUNT (Worker Details Management) View -->
+            <section id="account-view" class="view-section max-w-full w-full p-6 md:p-10 bg-white rounded-2xl shadow-2xl hidden">
+                <h3 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-id-card text-blue-500 mr-3"></i> Manage Your Account Details
+                </h3>
+
+                <form id="profile-form" class="space-y-6">
+                    <!-- Personal Info -->
+                    <div class="bg-gray-50 p-6 rounded-xl border-l-4 border-blue-500">
+                        <h4 class="text-xl font-semibold mb-4 text-gray-700">Personal & Contact Information</h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                                <input type="text" id="full_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" placeholder="Enter your full name">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                                <input type="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border bg-gray-200" disabled placeholder="worker@powerlink.com">
+                            </div>
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                <input type="tel" id="phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" placeholder="+1 (555) 123-4567">
+                            </div>
+                            <div>
+                                <label for="address" class="block text-sm font-medium text-gray-700">Home Base Address</label>
+                                <input type="text" id="address" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" placeholder="456 Commerce St, Central City">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Professional Info -->
+                    <div class="bg-gray-50 p-6 rounded-xl border-l-4 border-yellow-500">
+                        <h4 class="text-xl font-semibold mb-4 text-gray-700">Professional Details</h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="worker_type" class="block text-sm font-medium text-gray-700">Primary Specialization</label>
+                                <select id="worker_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                                    <option value="electrician">Electrician</option>
+                                    <option value="mechanic">Mechanic</option>
+                                    <option value="technician">HVAC/Appliance Technician</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="license" class="block text-sm font-medium text-gray-700">License/Certification ID</label>
+                                <input type="text" id="license" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" placeholder="LIC-98765">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700">Service Radius (km)</label>
+                            <input type="number" id="radius" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="15" min="5" max="100">
+                            <p class="text-xs text-gray-500 mt-1">Orders outside this radius will not be offered to you.</p>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="save-profile-btn" class="btn-primary px-6 py-3 rounded-xl shadow-lg w-full md:w-auto">
+                        <i class="fas fa-save mr-2"></i> Save All Changes
+                    </button>
+                    <p id="save-status" class="text-sm font-semibold mt-2"></p>
+                </form>
+
+            </section>
+
+        </div>
+    </div>
+
+    <!-- JavaScript for SPA, Availability Toggle, and Firebase Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        setLogLevel('Debug'); // Enable Firestore logging
+
+        // --- Global Variables (Provided by Canvas Environment) ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth;
+        let userId = 'loading';
+        let isAuthReady = false;
+        
+        // Default worker profile data
+        const defaultProfile = {
+            fullName: "New Worker",
+            email: "", // Will be filled by auth object
+            phone: "",
+            address: "",
+            workerType: "electrician",
+            license: "",
+            radius: 15, // km
+            isOnline: false,
+            // Mock dynamic metrics that a real system would calculate
+            weeklyEarnings: 0.00, 
+            jobsCompleted: 0,
+            avgRating: 0.0,
+            acceptanceRate: 0, // percentage
+        };
+
+        // --- DOM Elements ---
+        const navLinks = document.querySelectorAll('.nav-link');
+        const viewSections = document.querySelectorAll('.view-section');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const availabilityToggle = document.getElementById('availability-toggle');
+        const availabilityHeader = document.getElementById('availability-header');
+        const onlineStatusTextHeader = document.getElementById('online-status-text-header');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const profileForm = document.getElementById('profile-form');
+        const saveStatusElement = document.getElementById('save-status');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const completeProfileBtn = document.getElementById('complete-profile-btn');
+
+        const VIEWS_WITH_HEADER = ['dashboard-view', 'payments-view', 'orders-view', 'api-view', 'account-view'];
+
+        // Helper to show/hide loading state
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loadingOverlay.classList.remove('hidden');
+            } else {
+                loadingOverlay.classList.add('hidden');
+            }
+        }
+
+        // --- View Switching Logic (SPA) ---
+        function showView(viewId) {
+            viewSections.forEach(section => {
+                section.classList.add('hidden');
+                section.classList.remove('active');
+            });
+
+            const targetView = document.getElementById(viewId);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                targetView.classList.add('active');
+            }
+
+            navLinks.forEach(link => {
+                link.classList.remove('active-link');
+                if (link.getAttribute('data-view') === viewId) {
+                    link.classList.add('active-link');
+                }
+            });
+            
+            if (VIEWS_WITH_HEADER.includes(viewId)) {
+                availabilityHeader.classList.remove('hidden');
+            } else {
+                availabilityHeader.classList.add('hidden');
+            }
+
+            if (window.innerWidth < 768) {
+                sidebar.classList.remove('open');
+            }
+        }
+        
+        // --- Render Data to UI ---
+        function renderProfileData(data) {
+            // 1. ACCOUNT VIEW BINDING
+            document.getElementById('full_name').value = data.fullName || '';
+            document.getElementById('email').value = data.email || auth.currentUser.email || '';
+            document.getElementById('phone').value = data.phone || '';
+            document.getElementById('address').value = data.address || '';
+            document.getElementById('worker_type').value = data.workerType || 'electrician';
+            document.getElementById('license').value = data.license || '';
+            document.getElementById('radius').value = data.radius || 15;
+            
+            // 2. DASHBOARD VIEW BINDING
+            document.getElementById('weekly-earnings').textContent = `$ ${data.weeklyEarnings.toFixed(2)}`;
+            document.getElementById('jobs-completed').textContent = data.jobsCompleted;
+            document.getElementById('avg-rating').textContent = data.avgRating.toFixed(1);
+            document.getElementById('acceptance-rate').textContent = `${data.acceptanceRate}%`;
+            document.getElementById('dashboard-specialization').textContent = data.workerType.charAt(0).toUpperCase() + data.workerType.slice(1);
+            document.getElementById('dashboard-radius').textContent = `${data.radius} km`;
+
+            // 3. AVAILABILITY TOGGLE BINDING
+            availabilityToggle.checked = data.isOnline;
+            handleAvailabilityToggle();
+        }
+
+        // --- Save Data to Firestore ---
+        async function saveProfile() {
+            if (!isAuthReady) {
+                console.error("Authentication not ready. Cannot save data.");
+                return;
+            }
+
+            const profileDocRef = doc(db, "artifacts", appId, "users", userId, "workerData", "profile");
+            
+            // Read values from form
+            const profileData = {
+                fullName: document.getElementById('full_name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                address: document.getElementById('address').value.trim(),
+                workerType: document.getElementById('worker_type').value,
+                license: document.getElementById('license').value.trim(),
+                radius: parseInt(document.getElementById('radius').value, 10) || 15,
+                
+                // Keep existing metrics to prevent overwriting
+                weeklyEarnings: parseFloat(document.getElementById('weekly-earnings').textContent.replace(/[$,\s]/g, '')),
+                jobsCompleted: parseInt(document.getElementById('jobs-completed').textContent),
+                avgRating: parseFloat(document.getElementById('avg-rating').textContent),
+                acceptanceRate: parseInt(document.getElementById('acceptance-rate').textContent.replace('%', '')),
+                
+                // isOnline state
+                isOnline: availabilityToggle.checked,
+
+                // Metadata (unchangeable)
+                email: auth.currentUser.email || '',
+                userId: userId,
+            };
+
+            setLoading(true);
+            try {
+                // Use setDoc with merge: true to update existing fields without deleting others
+                await setDoc(profileDocRef, profileData, { merge: true });
+                saveStatusElement.textContent = 'Profile saved successfully!';
+                saveStatusElement.classList.remove('text-red-500');
+                saveStatusElement.classList.add('text-green-600');
+            } catch (error) {
+                console.error("Error saving profile:", error);
+                saveStatusElement.textContent = 'Error saving profile. See console.';
+                saveStatusElement.classList.remove('text-green-600');
+                saveStatusElement.classList.add('text-red-500');
+            } finally {
+                setLoading(false);
+                setTimeout(() => saveStatusElement.textContent = '', 3000);
+            }
+        }
+        
+        // --- Availability Toggle Logic ---
+        async function handleAvailabilityToggle() {
+            const isOnline = availabilityToggle.checked;
+            
+            if (isOnline) {
+                onlineStatusTextHeader.textContent = 'Online';
+                onlineStatusTextHeader.classList.remove('text-gray-400');
+                onlineStatusTextHeader.classList.add('text-green-500');
+            } else {
+                onlineStatusTextHeader.textContent = 'Offline';
+                onlineStatusTextHeader.classList.remove('text-green-500');
+                onlineStatusTextHeader.classList.add('text-gray-400');
+            }
+            
+            // Persist the change to Firestore immediately
+            if (isAuthReady) {
+                const profileDocRef = doc(db, "artifacts", appId, "users", userId, "workerData", "profile");
+                try {
+                    await setDoc(profileDocRef, { isOnline: isOnline }, { merge: true });
+                } catch (e) {
+                    console.error("Could not update online status:", e);
+                }
+            }
+        }
+
+        // --- Firebase Initialization and Auth ---
+        async function setupFirebase() {
+            setLoading(true);
+            try {
+                // Initialize Firebase
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Handle Authentication
+                let currentUser = null;
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                currentUser = auth.currentUser;
+                userId = currentUser?.uid || crypto.randomUUID();
+                isAuthReady = true;
+                userIdDisplay.textContent = userId;
+                
+                // Set up Real-time listener for the worker's profile
+                const profileDocRef = doc(db, "artifacts", appId, "users", userId, "workerData", "profile");
+                
+                onSnapshot(profileDocRef, async (docSnap) => {
+                    if (docSnap.exists()) {
+                        const profileData = docSnap.data();
+                        console.log("Profile data loaded:", profileData);
+                        renderProfileData(profileData);
+                    } else {
+                        // Document doesn't exist, create it with defaults
+                        console.log("No profile found. Creating default...");
+                        const newProfile = { 
+                            ...defaultProfile, 
+                            email: currentUser?.email || 'N/A', 
+                            userId: userId 
+                        };
+                        // Initialize metrics to their default values
+                        await setDoc(profileDocRef, newProfile);
+                        renderProfileData(newProfile);
+                    }
+                    setLoading(false); // Hide loading after initial load or creation
+                }, (error) => {
+                    console.error("Error listening to profile data:", error);
+                    setLoading(false);
+                });
+
+            } catch (error) {
+                console.error("Firebase setup failed:", error);
+                userIdDisplay.textContent = 'Auth Failed';
+                setLoading(false);
+            }
+        }
+
+        // --- Event Listeners and Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Navigation Listeners
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const viewId = link.getAttribute('data-view');
+                    showView(viewId);
+                });
+            });
+
+            // Home CTA Button to navigate to Account
+            completeProfileBtn.addEventListener('click', () => {
+                showView('account-view');
+            });
+
+            // Mobile Menu Toggle
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+            
+            // Availability Toggle Listener (Saves to Firestore)
+            availabilityToggle.addEventListener('change', saveProfile); 
+
+            // Form Submission Listener (Saves to Firestore)
+            profileForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveProfile();
+            });
+
+            // Start Firebase setup
+            setupFirebase();
+            
+            // Set initial view to HOME
+            showView('home-view');
+        });
+    </script>
+</body>
+</html>

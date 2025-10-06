@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="worker-dashboard.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">WorkerPortal</div>
+        <ul>
+            <li class="active"><a href="#">Dashboard</a></li>
+            <li><a href="#">Orders</a></li>
+            <li><a href="#">Payments</a></li>
+            <li><a href="#">Schedule</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <!-- Navbar -->
+        <div class="navbar">
+            <div class="menu-btn" id="menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <h2>Welcome, Raj!</h2>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="cards">
+            <div class="card">
+                <h3>Pending Orders</h3>
+                <p>5</p>
+            </div>
+            <div class="card">
+                <h3>Completed Orders</h3>
+                <p>12</p>
+            </div>
+            <div class="card">
+                <h3>Earnings</h3>
+                <p>$1,250</p>
+            </div>
+            <div class="card">
+                <h3>Withdrawable Balance</h3>
+                <p>$500</p>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="orders">
+            <h3>Recent Orders</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Customer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#001</td>
+                        <td>AC Repair</td>
+                        <td>26 Sep 2025</td>
+                        <td><span class="status pending">Pending</span></td>
+                        <td>John Doe</td>
+                    </tr>
+                    <tr>
+                        <td>#002</td>
+                        <td>TV Installation</td>
+                        <td>25 Sep 2025</td>
+                        <td><span class="status completed">Completed</span></td>
+                        <td>Mary Jane</td>
+                    </tr>
+                    <tr>
+                        <td>#003</td>
+                        <td>Generator Service</td>
+                        <td>24 Sep 2025</td>
+                        <td><span class="status canceled">Canceled</span></td>
+                        <td>Alex Smith</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script src="worker-dashboard.js"></script>
+</body>
+</html>

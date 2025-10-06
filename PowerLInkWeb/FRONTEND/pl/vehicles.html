@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Services</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e6f7ff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #222;
+    }
+
+    .search-container {
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      width: 100%;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 5px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+
+    .dropdown div {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .dropdown div:hover {
+      background: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Vehicle Services</h1>
+
+  <div class="search-container">
+    <input type="text" id="search" placeholder="Search for vehicle service...">
+    <div class="dropdown" id="dropdown">
+      <div>Car Repair</div>
+      <div>Bike Repair</div>
+      <div>Auto Rickshaw Service</div>
+      <div>Truck Maintenance</div>
+      <div>Bus Service</div>
+      <div>Battery Replacement</div>
+      <div>Oil Change</div>
+      <div>Brake Service</div>
+      <div>Tyre Replacement</div>
+      <div>Wheel Alignment</div>
+      <div>Car Wash & Detailing</div>
+      <div>Air Conditioning Repair</div>
+      <div>Engine Diagnostics</div>
+      <div>Spare Parts Replacement</div>
+    </div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById("search");
+    const dropdown = document.getElementById("dropdown");
+
+    // Show dropdown when input is focused
+    searchInput.addEventListener("focus", () => {
+      dropdown.style.display = "block";
+    });
+
+    // Filter services as user types
+    searchInput.addEventListener("input", () => {
+      let filter = searchInput.value.toLowerCase();
+      let options = dropdown.querySelectorAll("div");
+      options.forEach(option => {
+        if (option.innerText.toLowerCase().includes(filter)) {
+          option.style.display = "block";
+        } else {
+          option.style.display = "none";
+        }
+      });
+    });
+
+    // Set input value when clicking an option
+    dropdown.addEventListener("click", (e) => {
+      if (e.target.tagName === "DIV") {
+        searchInput.value = e.target.innerText;
+        dropdown.style.display = "none";
+      }
+    });
+
+    // Hide dropdown if clicked outside
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".search-container")) {
+        dropdown.style.display = "none";
+      }
+    });
+  </script>
+
+</body>
+</html>

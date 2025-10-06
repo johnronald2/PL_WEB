@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PowerLink Account</title>
+<link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+
+<div class="dashboard">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>PowerLink</h2>
+      <p>Account Dashboard</p>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="#" data-page="account" class="active">Account Info</a></li>
+      <li><a href="#" data-page="orders">Orders</a></li>
+      <li><a href="#" data-page="payments">Payments</a></li>
+      <li><a href="#" data-page="addresses">Addresses</a></li>
+      <li><a href="#" data-page="settings">Settings</a></li>
+      <li><a href="#" data-page="settings">Settings</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content" id="content">
+    <h1>Account Info</h1>
+    <div class="card">
+      <p><strong>Name:</strong> John Doe</p>
+      <p><strong>Email:</strong> john@example.com</p>
+      <p><strong>Phone:</strong> +91 9876543210</p>
+      <p><strong>Address:</strong> 123 Street, City, State, India</p>
+    </div>
+  </main>
+</div>
+
+<script>
+const content = document.getElementById("content");
+const pages = {
+  account: `<h1>Account Info</h1>
+            <div class="card">
+              <p><strong>Name:</strong> John Doe</p>
+              <p><strong>Email:</strong> john@example.com</p>
+              <p><strong>Phone:</strong> +91 9876543210</p>
+              <p><strong>Address:</strong> 123 Street, City, State, India</p>
+            </div>`,
+
+  orders: `<h1>Orders</h1>
+           <div class="card">
+             <p>Order #101 - Completed</p>
+             <p>Order #102 - In Progress</p>
+             <p>Order #103 - Pending</p>
+           </div>`,
+
+  payments: `<h1>Payments</h1>
+             <div class="card">
+               <p>Credit Card - **** 1234</p>
+               <p>PayPal - john@example.com</p>
+             </div>`,
+
+  addresses: `<h1>Addresses</h1>
+              <div class="card">
+                <p>Home: 123 Street, City, State, India</p>
+                <p>Office: 456 Avenue, City, State, India</p>
+              </div>`,
+
+  settings: `<h1>Settings</h1>
+             <div class="card">
+               <p>Change Password</p>
+               <p>Notification Preferences</p>
+               <p>Privacy Settings</p>
+             </div>`,
+};
+
+document.querySelectorAll(".sidebar a").forEach(link => {
+  link.addEventListener("click", e => {
+    e.preventDefault();
+    const page = e.target.dataset.page;
+    content.innerHTML = pages[page];
+
+    document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
+    e.target.classList.add("active");
+  });
+});
+</script>
+</body>
+</html>

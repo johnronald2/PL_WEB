@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PL - Your Shortcut to Power</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <style>
+    /* Any other styles that should remain can go here */
+  </style>
+
+
+
+  <script>
+    // Any other scripts that should remain can go here
+  </script>
+
+
+ <!-- Navbar -->
+  <section>
+ <header class="navbar" id="navbar">
+  <div class="logo">PowerLink</div>
+  <nav>
+    <ul class="nav-links">
+  <li><a>
+    <img src="images/home-svgrepo-com.svg" alt="Home Icon" class="nav-icon">
+    Home
+    </a>
+  </li>
+  <li><a href="partners/partners.html">
+    <img src="images/partners-svgrepo-com.svg" alt="Partners Icon" class="nav-icon">
+    Partner</a>
+  </li>
+  <li><a>
+    <img src="images/order-svgrepo-com.svg" alt="Orders Icon" class="nav-icon">
+    Order</a>
+  </li>
+  <li><a href="login.html">
+    <img src="images/logout-svgrepo-com.svg" alt="Login Icon" class="nav-icon">
+    Login</a>
+  </li>
+  <li><a href="signup.html">
+    <img src="images/sign in.svg" alt="Signup Icon" class="nav-icon">
+    Signup</a>
+  </li>
+  <li><a>
+    <img src="images/cart-shopping-fast.svg" alt="Cart Icon" class="nav-icon">
+    Car</a>
+  </li>
+  <li><a href="../W&P/index.html">
+    <img src="images/worker-1.svg" alt="Cart Icon" class="nav-icon">
+  wokers</a>
+  </li>
+</ul>
+
+  </nav>
+</header> 
+</section>
+
+
+    <!-- Button in Navbar 
+<button class="cta-btn" onclick="window.location.href='auth.html'">
+  Login / Sign In
+</button> -->
+
+
+<!-- OR as a link -->
+  
+
+  <!-- Hero Section -->
+  <section class="hero">
+  <div class="hero-content">
+    <h1>Your Shortcut to Power ⚡</h1>
+    <p>Fast, reliable, and verified electricians—anytime, anywhere.</p>
+    
+    <div class="search-box">
+      <input type="text" placeholder="📍 Enter your location">
+      <input type="text" placeholder="🔌 Search for your service">
+      <button>Place Order</button>
+    </div>
+  </div>
+</section>
+
+  <!-- Services Section -->
+<section id="services" class="services">
+  <div class="container">
+    <h2 class="section-title">Our Services</h2>
+    <div class="services-grid">
+
+      <!-- Service 1 -->
+      <div class="service-card">
+        <img src="images/electrician-svgrepo-com (1).svg" alt="Technician Service" />
+        <h3>Technicians</h3>
+      </div> 
+
+
+<a href="electronics.html" style="text-decoration: none; color: inherit;">
+  <div class="service-card">
+    <img src="images/electrician-svgrepo-com.svg" alt="Electronics Service" /> 
+    <h3>Electricians</h3>
+  </div>
+</a>
+
+
+      <!-- Service 3 -->
+     
+     <a href="vehicles.html" class="service-link">
+  <div class="service-card">
+    <img src="images/mechaniclogo.svg" alt="Vehicle Service" />
+    <h3>Mechanics</h3>
+  </div>
+</a>
+
+</section>
+
+
+<section class="services">
+  <h2 class="section-title">Our Best Categories</h2>
+  <div class="services-grid">
+
+    <!-- Electronics -->
+    <a href="electronics-services.html" class="service-link">
+      <div class="service-card">
+        <img src="images/electronics.jpg" alt="Electronics">
+        <h3>Electronics</h3>
+      </div>
+    </a>
+
+    <!-- Vehicles -->
+    <a href="vehicle-services.html" class="service-link">
+      <div class="service-card">
+        <img src="images/vehicles.jpg" alt="Vehicles">
+        <h3>Vehicles</h3>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+
+<script>
+function scrollGallery(id, direction) {
+  const gallery = document.getElementById(id);
+
+  // Adjust scroll amount per click (px)
+  const scrollAmount = 300; 
+
+  gallery.scrollBy({
+    left: direction * scrollAmount,
+    behavior: 'smooth'
+  });
+}
+</script>
+
+<!--images of services-->
+<section class="category">
+  <div class="category-header">
+    <h2>Electronics</h2>
+    <div class="category-arrows">
+      <button class="scroll-btn" onclick="scrollGallery('electronics', -1)">&larr;</button>
+      <button class="scroll-btn" onclick="scrollGallery('electronics', 1)">&rarr;</button>
+    </div>
+  </div>
+
+  <div class="gallery" id="electronics">
+    <a href="e-ec.html"><img src="images/TV.html.png" alt="TV" width="100px"><span>TV</span></a>
+    <a href="e-ec.html"><img src="images/FRIDGE.webp" alt="Fridge"width="100px"><span>Fridge</span></a>
+    <a href="e-ec.html"><img src="images/LAPTOP.webp" alt="Laptop"width="100px"><span>Laptop</span></a>
+    <a href="e-ec.html"><img src="images/AC.jpg" alt="AC"width="100px"><span>AC</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"width="100px"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"width="100px"><span>Microwave</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"width="100px"><span>Camera</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"width="100px"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"width="100px"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"width="100px"><span>Projector</span></a>
+    <a href="e-ec.html"><img src="images/electronics1.jpg" alt="TV"width="100px"><span>TV</span></a>
+    <a href="e-ec.html"><img src="images/electronics2.jpg" alt="Laptop"width="100px"><span>Laptop</span></a>
+    <a href="e-ec.html"><img src="images/electronics3.jpg" alt="Fridge"width="100px"><span>Fridge</span></a>
+    <a href="e-ec.html"><img src="images/electronics4.jpg" alt="AC"width="100px"><span>AC</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"width="100px"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"width="100px"><span>Microwave</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"width="100px"><span>Camera</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"width="100px"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"width="100px"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"width="100px"><span>Projector</span></a>
+    <a href="e-ec.html"><img src="images/electronics1.jpg" alt="TV"width="100px"><span>TV</span></a>
+    <a href="e-ec.html"><img src="images/electronics2.jpg" alt="Laptop"width="100px"><span>Laptop</span></a>
+    <a href="e-ec.html"><img src="images/electronics3.jpg" alt="Fridge"width="100px"><span>Fridge</span></a>
+    <a href="e-ec.html"><img src="images/electronics4.jpg" alt="AC"width="100px"><span>AC</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"><span>Microwave</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"><span>Camera</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"><span>Projector</span></a>
+    <a href="e-ec.html"><img src="images/TV.html.png" alt="TV" width="100px"><span>TV</span></a>
+    <a href="e-ec.html"><img src="images/FRIDGE.webp" alt="Fridge"width="100px"><span>Fridge</span></a>
+    <a href="e-ec.html"><img src="images/LAPTOP.webp" alt="Laptop"width="100px"><span>Laptop</span></a>
+    <a href="e-ec.html"><img src="images/AC.jpg" alt="AC"width="100px"><span>AC</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"width="100px"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"width="100px"><span>Microwave</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"width="100px"><span>Camera</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"width="100px"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"width="100px"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"width="100px"><span>Projector</span></a>
+    <a href="e-ec.html"><img src="images/electronics1.jpg" alt="TV"width="100px"><span>TV</span></a>
+    <a href="e-ec.html"><img src="images/electronics2.jpg" alt="Laptop"width="100px"><span>Laptop</span></a>
+    <a href="e-ec.html"><img src="images/electronics3.jpg" alt="Fridge"width="100px"><span>Fridge</span></a>
+    <a href="e-ec.html"><img src="images/electronics4.jpg" alt="AC"width="100px"><span>AC</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"width="100px"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"width="100px"><span>Microwave</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"width="100px"><span>Camera</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"width="100px"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"width="100px"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"width="100px"><span>Projector</span></a>
+    <a href="e-ec.html"><img src="images/electronics1.jpg" alt="TV"width="100px"><span>TV</span></a>
+    <a href="e-ec.html"><img src="images/electronics2.jpg" alt="Laptop"width="100px"><span>Laptop</span></a>
+    <a href="e-ec.html"><img src="images/electronics3.jpg" alt="Fridge"width="100px"><span>Fridge</span></a>
+    <a href="e-ec.html"><img src="images/electronics4.jpg" alt="AC"width="100px"><span>AC</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"><span>Microwave</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"><span>Camera</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"><span>Projector</span></a>
+  </div>
+</section>
+
+<section class="category">
+  <div class="category-header">
+    <h2>vehicles</h2>
+    <div class="category-arrows">
+      <button class="scroll-btn" onclick="scrollGallery('electronics2', -1)">&larr;</button>
+      <button class="scroll-btn" onclick="scrollGallery('electronics2', 1)">&rarr;</button>
+    </div>
+  </div>
+
+  <div class="gallery" id="electronics2">
+    <a href="e-ec.html"><img src="images/electronics1.jpg" alt="TV"><span>Bike</span></a>
+    <a href="e-ec.html"><img src="images/electronics2.jpg" alt="Laptop"><span>Car</span></a>
+    <a href="e-ec.html"><img src="images/electronics3.jpg" alt="Fridge"><span>Bus</span></a>
+    <a href="e-ec.html"><img src="images/electronics4.jpg" alt="AC"><span>Auto</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"><span>Scooter</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"><span>Truk</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"><span>Projector</span></a>
+    <a href="e-ec.html"><img src="images/electronics1.jpg" alt="TV"><span>TV</span></a>
+    <a href="e-ec.html"><img src="images/electronics2.jpg" alt="Laptop"><span>Laptop</span></a>
+    <a href="e-ec.html"><img src="images/electronics3.jpg" alt="Fridge"><span>Fridge</span></a>
+    <a href="e-ec.html"><img src="images/electronics4.jpg" alt="AC"><span>AC</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"><span>Microwave</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"><span>Camera</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"><span>Projector</span></a>
+    <a href="e-ec.html"><img src="images/electronics1.jpg" alt="TV"><span>TV</span></a>
+    <a href="e-ec.html"><img src="images/electronics2.jpg" alt="Laptop"><span>Laptop</span></a>
+    <a href="e-ec.html"><img src="images/electronics3.jpg" alt="Fridge"><span>Fridge</span></a>
+    <a href="e-ec.html"><img src="images/electronics4.jpg" alt="AC"><span>AC</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"><span>Microwave</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"><span>Camera</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"><span>Projector</span></a>
+  </div>
+</section>
+
+<section class="category">
+  <div class="category-header">
+    <h2>vehicles</h2>
+    <div class="category-arrows">
+      <button class="scroll-btn" onclick="scrollGallery('spareparts', -1)">&larr;</button>
+      <button class="scroll-btn" onclick="scrollGallery('spareparts', 1)">&rarr;</button>
+    </div>
+  </div>
+
+  <div class="gallery" id="spareparts">
+    <a href="e-ec.html"><img src="images/electronics1.jpg" alt="TV"><span>Bike</span></a>
+    <a href="e-ec.html"><img src="images/electronics2.jpg" alt="Laptop"><span>Car</span></a>
+    <a href="e-ec.html"><img src="images/electronics3.jpg" alt="Fridge"><span>Bus</span></a>
+    <a href="e-ec.html"><img src="images/electronics4.jpg" alt="AC"><span>Auto</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"><span>Scooter</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"><span>Truk</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"><span>Projector</span></a>
+    <a href="e-ec.html"><img src="images/electronics1.jpg" alt="TV"><span>TV</span></a>
+    <a href="e-ec.html"><img src="images/electronics2.jpg" alt="Laptop"><span>Laptop</span></a>
+    <a href="e-ec.html"><img src="images/electronics3.jpg" alt="Fridge"><span>Fridge</span></a>
+    <a href="e-ec.html"><img src="images/electronics4.jpg" alt="AC"><span>AC</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"><span>Microwave</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"><span>Camera</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"><span>Projector</span></a>
+    <a href="e-ec.html"><img src="images/electronics1.jpg" alt="TV"><span>TV</span></a>
+    <a href="e-ec.html"><img src="images/electronics2.jpg" alt="Laptop"><span>Laptop</span></a>
+    <a href="e-ec.html"><img src="images/electronics3.jpg" alt="Fridge"><span>Fridge</span></a>
+    <a href="e-ec.html"><img src="images/electronics4.jpg" alt="AC"><span>AC</span></a>
+    <a href="e-ec.html"><img src="images/electronics5.jpg" alt="Washing Machine"><span>Washing Machine</span></a>
+    <a href="e-ec.html"><img src="images/electronics6.jpg" alt="Microwave"><span>Microwave</span></a>
+    <a href="e-ec.html"><img src="images/electronics7.jpg" alt="Camera"><span>Camera</span></a>
+    <a href="e-ec.html"><img src="images/electronics8.jpg" alt="Speaker"><span>Speaker</span></a>
+    <a href="e-ec.html"><img src="images/electronics9.jpg" alt="Smartwatch"><span>Smartwatch</span></a>
+    <a href="e-ec.html"><img src="images/electronics10.jpg" alt="Projector"><span>Projector</span></a>
+  </div>
+</section>
+
+
+
+  <!-- Features Section -->
+  <section id="features" class="features">
+    <h2>Why Choose PowerLink?</h2>
+    <div class="feature-grid">
+      <div class="feature"><h3>⚡ 30 Min Arrival</h3><p>Guaranteed fast service at your doorstep.</p></div>
+      <div class="feature"><h3>✔ Verified Technicians</h3><p>Only trusted and skilled electricians onboard.</p></div>
+      <div class="feature"><h3>💰 Transparent Pricing</h3><p>No hidden charges. Pay only for what you get.</p></div>
+      <div class="feature"><h3>⭐ Ratings & Reviews</h3><p>Choose based on genuine feedback from other users.</p></div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about">
+    <h2>About PowerLink</h2>
+    <p>
+      PowerLink connects users with trusted electricians & mechanics. Whether it’s AC repair, wiring, or urgent issues, our verified technicians arrive within 30 minutes, ensuring safety and fair pricing.
+    </p>
+  </section>
+
+  <!-- Partner With Us -->
+  <section id="partner" class="partner">
+    <h2>Partner With Us</h2>
+    <p>Join PowerLink as an electrician or mechanic and grow your business.</p>
+
+<br>
+    
+   <a href="partners/partners.html" class="btn-primary">Join Now</a> 
+  
+  
+  </section>
+
+
+  <!-- Download App Section -->
+  <section id="download" class="download">
+    <h2>Get the App</h2>
+    <p>Available soon on Play Store & App Store</p>
+    <div class="download-buttons">
+      <a href="https://play.google.com/store/games?hl=en_IN"><img  alt="Play Store" src="images/playstore.webp"></a>
+      <a href="https://www.apple.com/in/app-store/"><img src="images/app.png" alt="App Store"></a>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <p>Email: support@powerlink.com | Phone: +91 1234567890</p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 PowerLink. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+

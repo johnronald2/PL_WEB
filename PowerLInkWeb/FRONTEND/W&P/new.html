@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Task Manager (Firestore)</title>
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* slate-300 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; /* slate-400 */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div id="app-container" class="bg-white shadow-2xl rounded-xl w-full max-w-xl p-8 space-y-6">
+        <h1 class="text-3xl font-extrabold text-gray-900 text-center border-b pb-3 mb-4">
+            Cloud-Backed Task Manager
+        </h1>
+
+        <!-- User/Status Bar -->
+        <div class="text-sm text-center p-2 rounded-lg bg-indigo-50 text-indigo-700 font-medium">
+            Status: <span id="auth-status" class="font-bold">Initializing...</span>
+            <div class="mt-1 text-xs text-indigo-500 truncate">
+                User ID: <span id="user-id">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Task Input Form -->
+        <form id="task-form" class="flex space-x-3">
+            <input type="text" id="task-input" placeholder="What needs to be done?"
+                   class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                   required>
+            <button type="submit" id="add-task-btn"
+                    class="bg-indigo-600 text-white font-semibold py-3 px-5 rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md">
+                Add Task
+            </button>
+        </form>
+
+        <!-- Task List Area -->
+        <div class="space-y-3 max-h-80 overflow-y-auto pr-2" id="task-list">
+            <!-- Tasks will be rendered here -->
+            <p id="loading-message" class="text-center text-gray-500 py-6">Loading tasks...</p>
+        </div>
+
+        <div id="error-message" class="hidden text-red-600 bg-red-100 p-3 rounded-lg text-sm font-medium"></div>
+    </div>
+
+    <!-- Firebase Imports and Application Logic -->
+    <script type="module">
+        // ----------------------------------------------------------------------
+        // 1. FIREBASE IMPORTS
+        // ----------------------------------------------------------------------
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import {
+            getFirestore, collection, onSnapshot,
+            addDoc, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Set Firebase logging to debug
+        setLogLevel('Debug');
+
+        // ----------------------------------------------------------------------
+        // 2. GLOBAL VARIABLES & UI ELEMENTS
+        // ----------------------------------------------------------------------
+        const taskForm = document.getElementById('task-form');
+        const taskInput = document.getElementById('task-input');
+        const taskList = document.getElementById('task-list');
+        const authStatusEl = document.getElementById('auth-status');
+        const userIdEl = document.getElementById('user-id');
+        const loadingMessage = document.getElementById('loading-message');
+        const errorMessageEl = document.getElementById('error-message');
+
+        let db, auth;
+        let userId = null;
+        let isAuthReady = false;
+
+        // Mandated global environment variables
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        /**
+         * Displays an error message in the UI.
+         * @param {string} message The error message to display.
+         */
+        function displayError(message) {
+            console.error('Application Error:', message);
+            errorMessageEl.textContent = `Error: ${message}`;
+            errorMessageEl.classList.remove('hidden');
+            setTimeout(() => errorMessageEl.classList.add('hidden'), 5000);
+        }
+
+        /**
+         * Sets up Firebase, signs in, and initializes the services.
+         */
+        async function initializeFirebase() {
+            if (!firebaseConfig) {
+                displayError("Firebase configuration is missing. Cannot start the app.");
+                authStatusEl.textContent = 'Configuration Error';
+                return;
+            }
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                authStatusEl.textContent = 'Authenticating...';
+
+                // Handle authentication
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        userIdEl.textContent = userId;
+                        authStatusEl.textContent = 'Authenticated (Active)';
+                        isAuthReady = true;
+                        // Start listening for tasks only after auth is confirmed
+                        listenForTasks();
+                    } else {
+                        // Sign in using the custom token or anonymously
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (e) {
+                            displayError(`Authentication failed: ${e.message}`);
+                            userIdEl.textContent = 'N/A';
+                            authStatusEl.textContent = 'Auth Failed';
+                            // Fallback to a random ID if authentication entirely fails
+                            userId = crypto.randomUUID();
+                            isAuthReady = true;
+                        }
+                    }
+                });
+            } catch (e) {
+                displayError(`Firebase Initialization failed: ${e.message}`);
+            }
+        }
+
+        /**
+         * Renders the list of tasks to the UI.
+         * @param {Array<Object>} tasks Array of task documents.
+         */
+        function renderTasks(tasks) {
+            taskList.innerHTML = ''; // Clear existing list
+            loadingMessage.classList.add('hidden');
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<p class="text-center text-gray-500 py-6">No tasks yet! Add one above.</p>';
+                return;
+            }
+
+            tasks.forEach(task => {
+                const isCompleted = task.completed;
+                const taskItem = document.createElement('div');
+                taskItem.className = `flex items-center justify-between p-4 rounded-xl shadow-sm transition duration-150 
+                                      ${isCompleted ? 'bg-green-50 border-l-4 border-green-400 opacity-60' : 'bg-white border border-gray-200 hover:shadow-md'}`;
+
+                // Task Text and Toggle
+                const textContainer = document.createElement('div');
+                textContainer.className = 'flex items-center flex-grow cursor-pointer';
+                textContainer.onclick = () => toggleComplete(task.id, isCompleted);
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = isCompleted;
+                checkbox.className = 'h-5 w-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 mr-4';
+
+                const textSpan = document.createElement('span');
+                textSpan.className = `text-gray-900 text-base ${isCompleted ? 'line-through italic text-gray-500' : 'font-medium'}`;
+                textSpan.textContent = task.text;
+
+                textContainer.appendChild(checkbox);
+                textContainer.appendChild(textSpan);
+
+                // Delete Button
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'text-sm font-semibold text-red-500 hover:text-red-700 ml-4 py-1 px-2 rounded-lg transition duration-150';
+                deleteButton.onclick = () => deleteTask(task.id);
+
+                taskItem.appendChild(textContainer);
+                taskItem.appendChild(deleteButton);
+                taskList.appendChild(taskItem);
+            });
+        }
+
+        /**
+         * Gets the Firestore collection reference path.
+         * We use the private user path: /artifacts/{appId}/users/{userId}/tasks
+         */
+        function getTasksCollectionRef() {
+            if (!db || !userId) {
+                displayError("Database not initialized or user ID missing.");
+                return null;
+            }
+            // IMPORTANT: Using the mandated private path for user-specific data
+            const path = `artifacts/${appId}/users/${userId}/tasks`;
+            return collection(db, path);
+        }
+
+        /**
+         * Sets up a real-time listener for tasks.
+         */
+        function listenForTasks() {
+            const tasksRef = getTasksCollectionRef();
+            if (!tasksRef) return;
+
+            // IMPORTANT: onSnapshot provides real-time updates.
+            // We sort the data client-side as best practice to avoid index issues.
+            const q = query(tasksRef);
+
+            onSnapshot(q, (snapshot) => {
+                const tasks = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                // Sort by timestamp if available, otherwise by creation order
+                tasks.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+
+                renderTasks(tasks);
+            }, (error) => {
+                displayError(`Failed to fetch tasks: ${error.message}`);
+                loadingMessage.textContent = 'Error loading tasks.';
+            });
+        }
+
+        // ----------------------------------------------------------------------
+        // 3. CRUD OPERATIONS
+        // ----------------------------------------------------------------------
+
+        /**
+         * Adds a new task to Firestore.
+         * @param {string} text The text of the new task.
+         */
+        async function addTask(text) {
+            if (!isAuthReady || !text.trim()) return;
+
+            const tasksRef = getTasksCollectionRef();
+            if (!tasksRef) return;
+
+            try {
+                // Use addDoc to automatically generate a document ID
+                await addDoc(tasksRef, {
+                    text: text.trim(),
+                    completed: false,
+                    // Store server timestamp for reliable ordering
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) {
+                displayError(`Could not add task: ${e.message}`);
+            }
+        }
+
+        /**
+         * Deletes a task by ID.
+         * @param {string} id The document ID of the task.
+         */
+        async function deleteTask(id) {
+            if (!isAuthReady) return;
+
+            const tasksRef = getTasksCollectionRef();
+            if (!tasksRef) return;
+
+            try {
+                // Get the document reference
+                const docRef = doc(tasksRef, id);
+                await deleteDoc(docRef);
+            } catch (e) {
+                displayError(`Could not delete task: ${e.message}`);
+            }
+        }
+
+        /**
+         * Toggles the 'completed' status of a task.
+         * @param {string} id The document ID of the task.
+         * @param {boolean} currentStatus The current status of the task.
+         */
+        async function toggleComplete(id, currentStatus) {
+            if (!isAuthReady) return;
+
+            const tasksRef = getTasksCollectionRef();
+            if (!tasksRef) return;
+
+            try {
+                // Get the document reference
+                const docRef = doc(tasksRef, id);
+                await updateDoc(docRef, {
+                    completed: !currentStatus
+                });
+            } catch (e) {
+                displayError(`Could not update task: ${e.message}`);
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // 4. EVENT LISTENERS
+        // ----------------------------------------------------------------------
+
+        taskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = taskInput.value.trim();
+            if (text) {
+                addTask(text);
+                taskInput.value = ''; // Clear input field
+            }
+        });
+
+        // ----------------------------------------------------------------------
+        // 5. INITIALIZATION
+        // ----------------------------------------------------------------------
+        initializeFirebase();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+.categories {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem;
+}
+
+.category-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+  text-align: center;
+  width: 200px;
+}
+
+.category-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.category-card:hover {
+  transform: scale(1.05);
+}
+
+.service-list {
+  margin: 2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.service-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.back-btn {
+  text-align: center;
+  margin: 2rem;
+}
+
+.back-btn a {
+  text-decoration: none;
+  color: white;
+  background: #ff5722;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+.back-btn a:hover {
+  background: #e64a19;
+}

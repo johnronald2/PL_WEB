@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PowerLink - Login</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .auth-container {
+      background: #fff;
+      padding: 35px 40px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    }
+
+    .auth-container h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: #222;
+    }
+
+    .auth-container p {
+      font-size: 1rem;
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      border-color: #ffcc00;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px 0;
+      margin: 10px 0;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.25s ease-in-out;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background-color: #ffcc00;
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 204, 0, 0.4);
+    }
+
+    .otp-container {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+
+    .otp-input {
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 1.2rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .auth-link {
+      display: block;
+      margin-top: 15px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .auth-link:hover {
+      text-decoration: underline;
+    }
+
+    .auth-steps {
+      display: none;
+    }
+
+    .auth-steps.active {
+      display: block;
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .success-message {
+      color: #28a745;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .logo {
+      margin-bottom: 20px;
+    }
+
+    .logo img {
+      height: 60px;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="logo">
+      <h1>PowerLink</h1>
+    </div>
+
+    <!-- Login Step -->
+    <div id="login-step" class="auth-steps active">
+      <h2>Login to Your Account</h2>
+      <p>Enter your mobile number to receive an OTP</p>
+      
+      <div class="form-group">
+        <label for="login-mobile">Mobile Number</label>
+        <input type="tel" id="login-mobile" placeholder="Enter your 10-digit mobile number" maxlength="10">
+        <div id="login-mobile-error" class="error-message">Please enter a valid 10-digit mobile number</div>
+      </div>
+      
+      <button id="request-otp-btn" class="btn btn-primary">Request OTP</button>
+      
+      <a href="signup.html" class="auth-link">Don't have an account? Sign up</a>
+      <a href="index.html" class="auth-link">Back to Home</a>
+    </div>
+
+    <!-- Login OTP Verification Step -->
+    <div id="login-otp-step" class="auth-steps">
+      <h2>Verify OTP</h2>
+      <p>Enter the 6-digit code sent to <span id="login-mobile-display"></span></p>
+      
+      <div class="otp-container">
+        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+      </div>
+      
+      <div id="login-otp-error" class="error-message">Invalid OTP. Please try again.</div>
+      <div id="login-otp-success" class="success-message">OTP verified successfully! Redirecting...</div>
+      
+      <button id="verify-login-otp-btn" class="btn btn-primary">Verify & Login</button>
+      
+      <a href="#" id="resend-login-otp" class="auth-link">Didn't receive OTP? Resend</a>
+      <a href="#" id="back-to-login" class="auth-link">Back to Login</a>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>
